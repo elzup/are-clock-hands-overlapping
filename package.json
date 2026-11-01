@@ -18,7 +18,10 @@
       "require": "./lib/cjs/index.js"
     }
   },
-  "repository": "elzup/are-clock-hands-overlapping",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elzup/are-clock-hands-overlapping.git"
+  },
   "bugs": {
     "url": "https://github.com/elzup/are-clock-hands-overlapping/issues"
   },
