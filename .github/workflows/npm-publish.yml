@@ -1,0 +1,35 @@
+name: Publish
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  id-token: write # OIDC Trusted Publishing (no NPM_TOKEN needed)
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v6
+        with:
+          # OIDC publishing requires npm >= 11.5.1, which ships with Node 24
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+      # setup-node writes a placeholder _authToken; if it stays, npm skips the OIDC exchange and fails with E404
+      - name: Strip placeholder token so OIDC engages
+        run: sed -i '/:_authToken=/d; /always-auth/d' "$NPM_CONFIG_USERCONFIG"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+      # prepublishOnly runs build + test
+      - name: Publish
+        run: npm publish
