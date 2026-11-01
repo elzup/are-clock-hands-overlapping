@@ -1,5 +1,7 @@
 # are-clock-hands-overlapping
 
+[![ooparts](https://raw.githubusercontent.com/elzup/ooparts-spec/main/badge.svg)](https://github.com/elzup/ooparts-spec)
+
 > Judge whether the hour and minute hands of an analog clock overlap — deliberately built with DDD.
 
 アナログ時計の長針と短針が重なっているかを判定する。たったこれだけのことを、あえて DDD で。
