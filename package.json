@@ -1,7 +1,7 @@
 {
   "name": "are-clock-hands-overlapping",
   "version": "0.0.0",
-  "description": "Judge whether the hour and minute hands of an analog clock overlap (built with DDD on purpose)",
+  "description": "Judge whether the hour and minute hands of an analog clock overlap",
   "author": "elzup",
   "license": "MIT",
   "type": "module",
@@ -25,8 +25,7 @@
     "analog-clock",
     "clock-hands",
     "overlap",
-    "time",
-    "ddd"
+    "time"
   ],
   "engines": {
     "node": ">=20"
