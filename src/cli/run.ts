@@ -3,14 +3,14 @@ import {
   type JudgeOptions,
   judgeHandsOverlap,
 } from "../application/judgeHandsOverlap.js"
-import type { ClockTimeProps } from "../domain/time/ClockTime.js"
+import type { ClockTimeProps } from "../domain/time/clockTime.js"
 
 /** grep と同じ流儀: 重なっていれば 0、いなければ 1、使い方の誤りは 2 */
 export const EXIT_OVERLAPPING = 0
 export const EXIT_NOT_OVERLAPPING = 1
 export const EXIT_USAGE_ERROR = 2
 
-export type CliResult = {
+export interface CliResult {
   stdout: string
   stderr: string
   exitCode: number

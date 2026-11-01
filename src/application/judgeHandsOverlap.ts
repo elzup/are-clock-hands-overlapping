@@ -1,8 +1,13 @@
-import { HandsOverlapSpecification } from "../domain/overlap/HandsOverlapSpecification.js"
-import { Tolerance } from "../domain/overlap/Tolerance.js"
+import { judgeOverlap } from "../domain/overlap/judgeOverlap.js"
+import {
+  DEFAULT_TOLERANCE,
+  type Tolerance,
+  toleranceFromDegrees,
+  toleranceFromSeconds,
+} from "../domain/overlap/tolerance.js"
 import { type TimeInput, toClockTime } from "./timeInput.js"
 
-export type JudgeOptions = {
+export interface JudgeOptions {
   /** 許容する角度差 (°)。toleranceSeconds と同時指定はできない */
   toleranceDegrees?: number
   /** 許容する時間差 (秒)。長針が短針に追いつく速さで角度に換算する */
@@ -10,7 +15,7 @@ export type JudgeOptions = {
 }
 
 /** 外部に返す DTO。ドメインオブジェクトを漏らさずプリミティブだけにする */
-export type OverlapResult = {
+export interface OverlapResult {
   isOverlapping: boolean
   time: { hour: number; minute: number; second: number }
   hourHandDegrees: number
@@ -26,10 +31,10 @@ const toTolerance = (options: JudgeOptions): Tolerance => {
     )
   }
   if (toleranceDegrees !== undefined)
-    return Tolerance.ofDegrees(toleranceDegrees)
+    return toleranceFromDegrees(toleranceDegrees)
   if (toleranceSeconds !== undefined)
-    return Tolerance.ofSeconds(toleranceSeconds)
-  return Tolerance.default()
+    return toleranceFromSeconds(toleranceSeconds)
+  return DEFAULT_TOLERANCE
 }
 
 /**
@@ -40,17 +45,16 @@ export const judgeHandsOverlap = (
   input: TimeInput = new Date(),
   options: JudgeOptions = {}
 ): OverlapResult => {
-  const judgement = new HandsOverlapSpecification(toTolerance(options)).judge(
-    toClockTime(input)
-  )
-  const { hour, minute, second } = judgement.time
+  const { time, hourHand, minuteHand, angleBetweenDegrees, isOverlapping } =
+    judgeOverlap(toClockTime(input), toTolerance(options))
 
+  // branded type は実行時には素の number なので、そのまま DTO に載せられる
   return {
-    isOverlapping: judgement.isOverlapping,
-    time: { hour: hour.value, minute: minute.value, second: second.value },
-    hourHandDegrees: judgement.hourHand.degrees,
-    minuteHandDegrees: judgement.minuteHand.degrees,
-    angleBetweenDegrees: judgement.angleBetweenDegrees,
+    isOverlapping,
+    time: { hour: time.hour, minute: time.minute, second: time.second },
+    hourHandDegrees: hourHand,
+    minuteHandDegrees: minuteHand,
+    angleBetweenDegrees,
   }
 }
 

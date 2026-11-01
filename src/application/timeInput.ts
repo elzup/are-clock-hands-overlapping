@@ -1,10 +1,15 @@
-import { ClockTime, type ClockTimeProps } from "../domain/time/ClockTime.js"
+import {
+  type ClockTime,
+  type ClockTimeProps,
+  clockTimeFromDate,
+  createClockTime,
+} from "../domain/time/clockTime.js"
 
 /**
  * Temporal.PlainTime / PlainDateTime / ZonedDateTime と同じ形。
  * Temporal の型定義は TS の lib に未収録の環境があるため、構造で受ける。
  */
-export type TemporalTimeLike = {
+export interface TemporalTimeLike {
   readonly hour: number
   readonly minute: number
   readonly second: number
@@ -14,7 +19,7 @@ export type TemporalTimeLike = {
 }
 
 /** Temporal.Instant と同じ形 (ローカルタイムゾーンで解釈する) */
-export type TemporalInstantLike = {
+export interface TemporalInstantLike {
   readonly epochMilliseconds: number
 }
 
@@ -39,7 +44,7 @@ const isTemporalInstantLike = (
 
 // Temporal の値はプロトタイプ上の getter なので spread では値が取れない。明示的に読む
 const fromTemporalTime = (time: TemporalTimeLike): ClockTime =>
-  ClockTime.of({
+  createClockTime({
     hour: time.hour,
     minute: time.minute,
     second:
@@ -50,10 +55,10 @@ const fromTemporalTime = (time: TemporalTimeLike): ClockTime =>
   })
 
 export const toClockTime = (input: TimeInput): ClockTime => {
-  if (input instanceof Date) return ClockTime.fromDate(input)
+  if (input instanceof Date) return clockTimeFromDate(input)
   if (isTemporalTimeLike(input)) return fromTemporalTime(input)
   if (isTemporalInstantLike(input)) {
-    return ClockTime.fromDate(new Date(input.epochMilliseconds))
+    return clockTimeFromDate(new Date(input.epochMilliseconds))
   }
-  return ClockTime.of(input)
+  return createClockTime(input)
 }

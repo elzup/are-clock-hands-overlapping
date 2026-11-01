@@ -104,20 +104,28 @@ src/
 │   ├── judgeHandsOverlap.ts
 │   └── timeInput.ts          # Date / Temporal / object → ClockTime
 └── domain/                   # ドメイン層 (外部依存なし)
-    ├── time/                 # 値オブジェクト: Hour / Minute / Second / ClockTime
-    ├── hand/                 # 値オブジェクト Angle, ドメインサービス calculateHandPositions
-    ├── overlap/              # 仕様 HandsOverlapSpecification, Tolerance, OverlapJudgement
-    └── shared/               # DomainError (不変条件違反)
+    ├── time/                 # Hour / Minute / Second / ClockTime
+    ├── hand/                 # Angle, calculateHandPositions
+    ├── overlap/              # Tolerance, judgeOverlap
+    └── shared/               # Brand, DomainError
 ```
 
-- 不正値 (`hour: 24`, `minute: 1.5`, `NaN` …) は値オブジェクトの生成時点で `DomainError` を投げる。
-- ドメインオブジェクトも export しているので、独自のユースケースを組める。
+- class は使わず、**branded type + 検証関数** で書いている。`Hour` などは実行時には素の `number`、`ClockTime` は素のオブジェクトなので、そのまま JSON 化・比較できる。
+- 型の上では `toHour()` などを通した値しか `Hour` にならない。不正値 (`hour: 24`, `minute: 1.5`, `NaN` …) は生成時点で `DomainError` を投げる。
+- object の形は `interface`、primitive の brand だけ `type` で定義している。
+- ドメイン層の関数も export しているので、独自の判定を組める。
 
 ```ts
-import { ClockTime, HandsOverlapSpecification, Tolerance } from "are-clock-hands-overlapping"
+import {
+  createClockTime,
+  judgeOverlap,
+  toleranceFromSeconds,
+} from "are-clock-hands-overlapping"
 
-const spec = new HandsOverlapSpecification(Tolerance.ofSeconds(1))
-spec.isSatisfiedBy(ClockTime.of({ hour: 2, minute: 10, second: 54 })) // true
+judgeOverlap(
+  createClockTime({ hour: 2, minute: 10, second: 54 }),
+  toleranceFromSeconds(1)
+).isOverlapping // true
 ```
 
 ## Release

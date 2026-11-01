@@ -12,17 +12,31 @@ export type {
 } from "./application/timeInput.js"
 
 // domain layer (独自のユースケースを組みたい人向け)
-export { Angle } from "./domain/hand/Angle.js"
+export { type Angle, angleDistance, toAngle } from "./domain/hand/angle.js"
 export {
   calculateHandPositions,
   type HandPositions,
   RELATIVE_HAND_SPEED_DEG_PER_SECOND,
-} from "./domain/hand/HandPositionCalculator.js"
-export { HandsOverlapSpecification } from "./domain/overlap/HandsOverlapSpecification.js"
-export { OverlapJudgement } from "./domain/overlap/OverlapJudgement.js"
-export { Tolerance } from "./domain/overlap/Tolerance.js"
-export { DomainError } from "./domain/shared/DomainError.js"
-export { ClockTime, type ClockTimeProps } from "./domain/time/ClockTime.js"
-export { Hour } from "./domain/time/Hour.js"
-export { Minute } from "./domain/time/Minute.js"
-export { Second } from "./domain/time/Second.js"
+} from "./domain/hand/handPositions.js"
+export {
+  judgeOverlap,
+  type OverlapJudgement,
+} from "./domain/overlap/judgeOverlap.js"
+export {
+  DEFAULT_TOLERANCE,
+  type Tolerance,
+  toleranceFromDegrees,
+  toleranceFromSeconds,
+} from "./domain/overlap/tolerance.js"
+export type { Brand } from "./domain/shared/brand.js"
+export { DomainError } from "./domain/shared/domainError.js"
+export {
+  type ClockTime,
+  type ClockTimeProps,
+  clockTimeFromDate,
+  createClockTime,
+  isSameClockTime,
+} from "./domain/time/clockTime.js"
+export { type Hour, hourOnDial, toHour } from "./domain/time/hour.js"
+export { type Minute, toMinute } from "./domain/time/minute.js"
+export { type Second, toSecond } from "./domain/time/second.js"
