@@ -4,8 +4,12 @@ export {
   type JudgeOptions,
   judgeHandsOverlap,
   type OverlapResult,
-  type TimeInput,
 } from "./application/judgeHandsOverlap.js"
+export type {
+  TemporalInstantLike,
+  TemporalTimeLike,
+  TimeInput,
+} from "./application/timeInput.js"
 
 // domain layer (独自のユースケースを組みたい人向け)
 export { Angle } from "./domain/hand/Angle.js"

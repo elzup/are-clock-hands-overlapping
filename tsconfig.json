@@ -8,7 +8,7 @@
     "outDir": "lib",
     "baseUrl": ".",
     "declaration": false,
-    "types": ["vitest/globals"],
+    "types": ["node", "vitest/globals"],
     "paths": {
       "*": ["node_modules/*", "src/types/*"]
     }

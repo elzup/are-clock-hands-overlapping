@@ -79,6 +79,7 @@ describe("judgeHandsOverlap", () => {
   it("角度の内訳を返す", () => {
     expect(judgeHandsOverlap({ hour: 3, minute: 0 })).toEqual({
       isOverlapping: false,
+      time: { hour: 3, minute: 0, second: 0 },
       hourHandDegrees: 90,
       minuteHandDegrees: 0,
       angleBetweenDegrees: 90,

@@ -1,8 +1,6 @@
 import { HandsOverlapSpecification } from "../domain/overlap/HandsOverlapSpecification.js"
 import { Tolerance } from "../domain/overlap/Tolerance.js"
-import { ClockTime, type ClockTimeProps } from "../domain/time/ClockTime.js"
-
-export type TimeInput = ClockTimeProps | Date
+import { type TimeInput, toClockTime } from "./timeInput.js"
 
 export type JudgeOptions = {
   /** 許容する角度差 (°)。toleranceSeconds と同時指定はできない */
@@ -14,13 +12,11 @@ export type JudgeOptions = {
 /** 外部に返す DTO。ドメインオブジェクトを漏らさずプリミティブだけにする */
 export type OverlapResult = {
   isOverlapping: boolean
+  time: { hour: number; minute: number; second: number }
   hourHandDegrees: number
   minuteHandDegrees: number
   angleBetweenDegrees: number
 }
-
-const toClockTime = (input: TimeInput): ClockTime =>
-  input instanceof Date ? ClockTime.fromDate(input) : ClockTime.of(input)
 
 const toTolerance = (options: JudgeOptions): Tolerance => {
   const { toleranceDegrees, toleranceSeconds } = options
@@ -36,25 +32,30 @@ const toTolerance = (options: JudgeOptions): Tolerance => {
   return Tolerance.default()
 }
 
-/** ユースケース: 時刻を受け取り、長針と短針の重なりを判定する */
+/**
+ * ユースケース: 時刻を受け取り、長針と短針の重なりを判定する。
+ * 時刻を省略すると現在時刻 (ローカルタイムゾーン) で判定する。
+ */
 export const judgeHandsOverlap = (
-  input: TimeInput,
+  input: TimeInput = new Date(),
   options: JudgeOptions = {}
 ): OverlapResult => {
   const judgement = new HandsOverlapSpecification(toTolerance(options)).judge(
     toClockTime(input)
   )
+  const { hour, minute, second } = judgement.time
 
   return {
     isOverlapping: judgement.isOverlapping,
+    time: { hour: hour.value, minute: minute.value, second: second.value },
     hourHandDegrees: judgement.hourHand.degrees,
     minuteHandDegrees: judgement.minuteHand.degrees,
     angleBetweenDegrees: judgement.angleBetweenDegrees,
   }
 }
 
-/** 長針と短針が重なっているかだけを返すショートハンド */
+/** 長針と短針が重なっているかだけを返すショートハンド。時刻省略時は現在時刻 */
 export const areClockHandsOverlapping = (
-  input: TimeInput,
+  input: TimeInput = new Date(),
   options: JudgeOptions = {}
 ): boolean => judgeHandsOverlap(input, options).isOverlapping

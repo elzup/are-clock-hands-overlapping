@@ -13,14 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      # version is read from packageManager in package.json
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v6
         with:
-          # OIDC publishing requires npm >= 11.5.1, which ships with Node 24
-          node-version: "24"
+          # Node 26 LTS ships npm 11 (OIDC publishing needs npm >= 11.5.1)
+          node-version-file: .node-version
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
       # setup-node writes a placeholder _authToken; if it stays, npm skips the OIDC exchange and fails with E404
